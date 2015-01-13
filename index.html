@@ -1,27 +1,151 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="jquery.js"></script>
-    <script src="data_generator.js"></script>
-  </head>
-  <body>
-    <script>
+<head>
+  <script src="jquery.js"></script>
+  <script src="data_generator.js"></script>
+  <link href="styles.css" type="text/css" rel="stylesheet"/>
+  <script type="text/javascript">
+<!--
+    function toggle_visibility(id) {
+       var e = document.getElementById(id);
+       if(e.style.display == 'block')
+          e.style.display = 'none';
+       else
+          e.style.display = 'block';
+    }
+//-->
+</script>
+</head>
+<body>
+  <script>
+  $(document).ready(function(){
+    var index = streams.home.length - 1;
+    var prevLength = streams.home.length;
+    while(index >= 0){
 
-      $(document).ready(function(){
-        var $body = $('body');
-        $body.html('');
+          // Construct the tweet
+          var tweet = buildTweet(streams.home[index]);
 
-        var index = streams.home.length - 1;
-        while(index >= 0){
-          var tweet = streams.home[index];
-          var $tweet = $('<div></div>');
-          $tweet.text('@' + tweet.user + ': ' + tweet.message);
-          $tweet.appendTo($body);
+          // Add tweet
+          tweet.appendTo($('#tweetStream'));
           index -= 1;
         }
 
-      });
+        //=========== Utility Functions ==========
+        /// Function: buildTweet(tweet)
+        /// This function takes in a Tweet object and returns a string that is the formatted tweet.
+        function buildTweet(tweet) {
 
-    </script>
-  </body>
+          var  periodOfDay = "AM";
+          // Get tweet date/time info
+          var mm = tweet.created_at.getMonth() + 1;
+          var dd = tweet.created_at.getDate();
+          var yyyy = tweet.created_at.getFullYear();
+          var hr = tweet.created_at.getHours();
+          var min = addZero(tweet.created_at.getMinutes());
+          
+          // Handle Hour representation
+          if(hr > 12) {
+            hr -= 12;
+            periodOfDay = "PM";
+          }
+
+          var time = hr + ':' + min + ' ' + periodOfDay;
+          var date =  mm+'/'+dd+'/'+yyyy;
+
+          $Tweet = $('' +
+              '<div class="singleTweet">' +
+                '<div class="row">' +
+                  '<div class="tweetUser">' +
+                      '<a href="javascript:void(0)" onclick="toggle_visibility(&quot;popupBox1&quot;)" class='+ tweet.user + '>' +
+                        '@' + tweet.user +
+                      '</a>' +
+                  '</div>' +
+                  '<div class="tweetTime">' + 
+                    time + ' on ' + date +
+                  '</div>' +
+                '</div>' +
+                '<div class="tweetMessage">' +
+                    tweet.message + 
+                '</div>' +
+              '</div>');
+
+          // Construct the tweet
+          return $Tweet;
+        }
+
+        function buildUserTweets(userName) {
+          // clear the popup box
+          $('#popupMessages').empty();
+          $('#popupContainer h3').html("Showing Tweets for " + userName);
+
+          // Get all tweets from user that exist in current stream
+          for(var i = 0; i < streams.users[userName].length; i++) {
+            var userTweet = buildTweet((streams.users[userName])[i]);
+            userTweet.prependTo($('#popupMessages'));
+          }
+        }
+
+        /// Function: addZero(int)
+        /// From w3schools.com, used to add preceding '0' on minutes less than 10
+        function addZero(i) {
+          if (i < 10) {
+            i = "0" + i;
+          }
+          return i;
+        }
+        //========================================
+
+        //=========== Button methods =============
+        $('.btnUpdate').on('click', function(e) {
+          e.preventDefault();
+          index = prevLength;
+          prevLength = streams.home.length;
+          while(index < streams.home.length){
+            // Construct the tweet
+            var tweet = buildTweet(streams.home[index]);
+            // Add tweet to front
+            tweet.prependTo($('#tweetStream'));
+            index += 1;
+           }
+        });
+
+        $(document).on('click', '.tweetUser', function(e) {
+          e.preventDefault();
+          var user = $(this).children().attr('class');
+          buildUserTweets(user);
+          //tweet.appendTo($('#popupContainer'));
+        });
+
+        //========================================
+      });
+</script>
+<div class="Title">
+  <h1>Twittler</h1>
+  <button class="btnUpdate">Update Tweets</button>
+</div>
+
+<!-- Entire Tweet Stream -->
+<div id="tweetStream">
+</div>
+
+<div id="popupBox1" class="popupPosition">
+  <div id="popupWrapper">
+    <p style="text-align: right"><a href="javascript:void(0)" onclick="toggle_visibility('popupBox1');">X</a>
+      <div id="popupContainer">
+        <h3>Popup Box 1</h3>
+        <div id="popupMessages">
+        </div> <!-- popupMessages end -->
+      </div> <!-- popupContainer end -->
+    </div> <!-- popupWrapper end -->
+  </div> <!-- popupBox1 end-->
+
+
+  <div id="wrapper">
+   <p><a href="javascript:void(0)" onclick="toggle_visibility('popupBox1');">Open popup box 1</a></p>
+   <p><a href="javascript:void(0)" onclick="toggle_visibility('popupBox2');">Open popup box 2</a></p>
+   <p><a href="javascript:void(0)" onclick="toggle_visibility('popupBox3');">Open popup box 3</a></p>
+ </div>  
+ <a href="#">Go to top</a>
+</body>
 </html>
