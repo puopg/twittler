@@ -43,7 +43,7 @@
           var yyyy = tweet.created_at.getFullYear();
           var hr = tweet.created_at.getHours();
           var min = addZero(tweet.created_at.getMinutes());
-          
+
           // Handle Hour representation
           if(hr > 12) {
             hr -= 12;
@@ -97,6 +97,7 @@
         //========================================
 
         //=========== Button methods =============
+        /// btnUpdate: Fires when update button is pressed to refresh tweets
         $('.btnUpdate').on('click', function(e) {
           e.preventDefault();
           index = prevLength;
@@ -110,11 +111,11 @@
            }
         });
 
+        /// tweetUser: Fires when a username is clicked
         $(document).on('click', '.tweetUser', function(e) {
           e.preventDefault();
           var user = $(this).children().attr('class');
           buildUserTweets(user);
-          //tweet.appendTo($('#popupContainer'));
         });
 
         //========================================
@@ -140,12 +141,6 @@
     </div> <!-- popupWrapper end -->
   </div> <!-- popupBox1 end-->
 
-
-  <div id="wrapper">
-   <p><a href="javascript:void(0)" onclick="toggle_visibility('popupBox1');">Open popup box 1</a></p>
-   <p><a href="javascript:void(0)" onclick="toggle_visibility('popupBox2');">Open popup box 2</a></p>
-   <p><a href="javascript:void(0)" onclick="toggle_visibility('popupBox3');">Open popup box 3</a></p>
- </div>  
- <a href="#">Go to top</a>
+ <a href="javascript:void(0)">Go to top</a>
 </body>
 </html>
